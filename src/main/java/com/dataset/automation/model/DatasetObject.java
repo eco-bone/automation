@@ -12,6 +12,7 @@ import java.sql.Types;
 public class DatasetObject {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     private long originalId;
