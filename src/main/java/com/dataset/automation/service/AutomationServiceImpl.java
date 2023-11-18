@@ -6,7 +6,6 @@ import com.dataset.automation.dto.BotRequest;
 import com.dataset.automation.dto.DatasetDto;
 import com.dataset.automation.model.DatasetObject;
 import com.dataset.automation.model.Profession;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,7 +86,7 @@ public class AutomationServiceImpl implements AutomationService {
         return datasetIDS;
     }
 
-        public void exportToCsv(HttpServletResponseWrapper response) throws IOException {
+    public void exportToCsv(HttpServletResponseWrapper response) throws IOException {
         log.info("Download Process Started......");
         response.setContentType("text/csv");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
