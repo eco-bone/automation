@@ -38,17 +38,6 @@ public class BotServiceImpl implements BotService {
         return responseEntity.getBody();
     }
 
-//    public ChatGptResponse askQuestion(BotRequest botRequest) {
-//        return this.getResponse(
-//                this.buildHttpEntity(
-//                        new ChatGptRequest(
-//                                OpenAiConfig.MODEL,
-//                                botRequest.getMessage(),
-//                                OpenAiConfig.TEMPERATURE,
-//                                OpenAiConfig.MAX_TOKEN,
-//                                OpenAiConfig.TOP_P)));
-//    }
-
     public String getOutput(BotRequest botRequest) {
         ChatGptResponse response = this.getResponse(
                 this.buildHttpEntity(

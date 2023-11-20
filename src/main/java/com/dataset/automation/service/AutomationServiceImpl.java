@@ -6,7 +6,6 @@ import com.dataset.automation.dto.BotRequest;
 import com.dataset.automation.dto.DatasetDto;
 import com.dataset.automation.model.DatasetObject;
 import com.dataset.automation.model.Profession;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,12 +37,16 @@ public class AutomationServiceImpl implements AutomationService {
     @Autowired
     private final CrudService datasetService;
 
+    @Autowired
+    private final OpenAIChatService chatService;
+
     public AutomationServiceImpl(BotService botService, DatasetRepo datasetRepo,
-                                 ProfessionsRepo profRepo, CrudService datasetService) {
+                                 ProfessionsRepo profRepo, CrudService datasetService, OpenAIChatService chatService) {
         this.botService = botService;
         this.datasetRepo = datasetRepo;
         this.profRepo = profRepo;
         this.datasetService = datasetService;
+        this.chatService = chatService;
     }
 
 
@@ -83,12 +85,49 @@ public class AutomationServiceImpl implements AutomationService {
         log.info("DATASET CREATION COMPLETE. TO USE DATASET, EXPORT TO CSV FILE.");
     }
 
+    public void createDataset2(int n){
+        String getOriginalPrompt = "Give me the top 5 skills required to be a successful teacher.";
+        String paraphrasePrompt = "Paraphrase the given paragraph.";
+        log.info("prompts written.........");
+
+        DatasetObject datasetObject = new DatasetObject();
+        log.info("Dataset Object Created.........");
+//        String para = chatService.getChatCompletion(getOriginalPrompt);
+//        log.info(para);
+//        datasetObject.setOriginalId(datasetService.
+//                storeOriginalParagraph(para));
+
+
+        log.info("Original Para created...............");
+
+        String para = "1. Excellent communication skills: Effective teachers need to be able to clearly communicate information to their students in a way that is easily understandable. They must also be able to listen actively to student questions and concerns and provide valuable feedback.\n" +
+                "\n" +
+                "2. Strong instructional abilities: Teachers must have the skills to plan and deliver engaging, well-structured lessons that cater to the diverse learning needs of their students. This includes utilizing various teaching strategies, techniques, and resources to engage students and promote active learning.\n" +
+                "\n" +
+                "3. Patience and empathy: Successful teachers should have patience and understanding towards their students, recognizing that each student has their own unique strengths, weaknesses, and learning styles. Empathy allows teachers to connect with their students on a deeper level, fostering positive relationships and creating a supportive classroom environment.\n" +
+                "\n" +
+                "4. Adaptability and flexibility: The ability to adapt and adjust teaching methods and approaches based on the changing needs of students is crucial for success as a teacher. Being flexible allows teachers to accommodate different learning styles and adapt lessons as per the dynamics of the classroom.\n" +
+                "\n" +
+                "5. Organizational and time-management skills: Being well-organized and able to manage time effectively is essential for teachers to meet the demands of their profession. Teachers need to plan lessons, grade assignments, and provide timely feedback while also managing administrative tasks such as maintaining records and communicating with parents or colleagues.";
+
+//        log.info(para+ "\n" + paraphrasePrompt);
+
+        String para2 = chatService.getChatCompletion("Hello");
+        log.info(para2);
+        datasetObject.setParaphraseId(datasetService.
+                storeOriginalParagraph(para2));
+        log.info("Paraphrase Created...........");
+        datasetRepo.save(datasetObject);
+        log.info("Column for dataset saved................");
+        log.info("PROCESS FINISHED FINISHED FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
+
     public List<DatasetObject> listDatasetObjects() {
         List<DatasetObject> datasetIDS = datasetRepo.findAll(Sort.by("id").ascending());
         return datasetIDS;
     }
 
-        public void exportToCsv(HttpServletResponseWrapper response) throws IOException {
+    public void exportToCsv(HttpServletResponseWrapper response) throws IOException {
         log.info("Download Process Started......");
         response.setContentType("text/csv");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
