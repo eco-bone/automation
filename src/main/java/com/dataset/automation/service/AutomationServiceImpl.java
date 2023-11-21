@@ -86,24 +86,73 @@ public class AutomationServiceImpl implements AutomationService {
         log.info("DATASET CREATION COMPLETE. TO USE DATASET, EXPORT TO CSV FILE.");
     }
 
-    public void createDataset2(int n){
+    public void createDataset2(int n) {
         log.info("Dataset Creation Process Started.........");
-        String[] profession = {"teacher","carpenter","pilot","soldier"};
-        for(int i=0;i<n;i++){
-            String prompt = "Explain the top 5 skills required to be an outstanding " + profession[i] +" in about 500 words. " +
+        String[] profession = {"teacher", "carpenter", "pilot", "soldier"};
+        for (int i = 0; i < n; i++) {
+            String prompt = "Explain the top 5 skills required to be an outstanding " + profession[i] + " in about 500 words. " +
                     "After that, paraphrase the output. Provide the original answer and paraphrase separated by '==' which i can use as delimiter to split them. Dont provide the 'Original' and 'Paraphrased' headings for the paragraphs but keep the numbering and subheadings for the pointers.";
             String content = chatService.getChatCompletion(prompt);
-            log.info("Number of Calls to API Completed: "+ (i+1));
+            log.info("Number of Calls to API Completed: " + (i + 1));
             String[] sections = content.split("==");
             DatasetObject datasetObject = new DatasetObject();
+            log.info("Saving the retrieved paragraphs...........");
             datasetObject.setOriginalId(datasetService.storeOriginalParagraph(sections[0]));
             datasetObject.setParaphraseId(datasetService.storeParaphrasedParagraph(sections[1]));
 
             datasetRepo.save(datasetObject);
-            log.info("Number of dataset objects saved: " + (i+1));
+            log.info("Number of dataset objects saved: " + (i + 1));
         }
     }
 
+    public void createDataset3(int n) {
+
+        String prompt = "";
+
+        String content = chatService.getChatCompletion(prompt);
+
+        String[] sections = content.split("==");
+
+        for (int i = 0; i < sections.length; i++) {
+            DatasetObject datasetObject = new DatasetObject();
+            if (i == 0) {
+                datasetObject.setOriginalId(datasetService.storeOriginalParagraph(sections[0]));
+                datasetObject.setParaphraseId(datasetService.storeParaphrasedParagraph(sections[1]));
+            } else if (i % 2 == 0) {
+                datasetObject.setOriginalId(datasetService.storeOriginalParagraph(sections[i]));
+                datasetObject.setParaphraseId(datasetService.storeParaphrasedParagraph(sections[i + 1]));
+            }
+            datasetRepo.save(datasetObject);
+        }
+    }
+
+
+    public void createDataset4(int n){
+        String prompt = "Provide the top 5 skills required to excel as a/an [profession].Describe each skill in around 150 words. Then, paraphrase this information to about 10 percent variation, but maintain the length of each skill description. Avoid using headings and separate the original and paraphrased versions using '==' as it is as a delimiter. Ensure the retention of the five skills and their respective descriptions' length. give the output for this for a teacher,biologist and driver.Ensure consistent formatting throughout the responses for each profession, regardless of the content or profession mentioned.";
+        log.info("Interacting with openAI API...........");
+        String content = chatService.getChatCompletion(prompt);
+        log.info(content);
+        log.info("Response Retrieved from API............");
+        String[] sections = content.split("==");
+        log.info("Response Extracted.........");
+        int x = 0;
+        for(int i=0;i<=5;i++){
+
+            DatasetObject datasetObject = new DatasetObject();
+            if(i==0){
+                datasetObject.setOriginalId(datasetService.storeOriginalParagraph(sections[i]));
+                datasetObject.setParaphraseId(datasetService.storeParaphrasedParagraph(sections[i+1]));
+                x++;
+            } else if(i>1 && i%2==1){
+                datasetObject.setOriginalId(datasetService.storeOriginalParagraph(sections[i]));
+                datasetObject.setParaphraseId(datasetService.storeParaphrasedParagraph(sections[i+1]));
+                x++;
+            }
+            datasetRepo.save(datasetObject);
+            log.info(x + "data objects saved");
+        }
+
+    }
     public List<DatasetObject> listDatasetObjects() {
         List<DatasetObject> datasetIDS = datasetRepo.findAll(Sort.by("id").ascending());
         return datasetIDS;
