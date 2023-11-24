@@ -38,7 +38,7 @@ public class AutomationController {
     @PostMapping("/createDataset/{num}")
     public ResponseEntity<String> createDataset(@PathVariable("num") int num) {
         try {
-            service.createDataset(num);
+            service.createDataset2(num);
             return ResponseEntity.ok("Dataset Creation Process Finished.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error encountered while creating Dataset.");

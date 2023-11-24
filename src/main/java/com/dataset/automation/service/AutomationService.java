@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 public interface AutomationService {
-    public void createDataset(int n);
+    public void createDataset2(int n);
     public void exportToCsv(HttpServletResponseWrapper response) throws IOException;
 
 }
