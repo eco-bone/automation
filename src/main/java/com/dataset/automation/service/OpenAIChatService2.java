@@ -9,8 +9,8 @@ import org.springframework.web.client.RestTemplate;
 public class OpenAIChatService2 {
 
     //    @Value("${openai.api.key}")
-    private String apiKey = "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";
-//    private String apiKey = "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";
+    private String apiKey = "";
+//    private String apiKey = "";
     private final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     public String getChatCompletion(String userMessage) {
